@@ -38,7 +38,7 @@ class Header extends React.Component {
                   <Link className="navbar-brand" to="/">
                     <img
                       className="logo"
-                      src="../images/kmutnb.jpg"
+                      src="../images/cis.png"
                       alt="image"
                     />
                   </Link>
@@ -95,6 +95,11 @@ class Header extends React.Component {
                           <li>
                             <Link className="nav-link" to="/example">
                               Example
+                            </Link>
+                          </li>
+                          <li>
+                            <Link className="nav-link" to="/standard">
+                              Standard ERC
                             </Link>
                           </li>
                         </ul>
