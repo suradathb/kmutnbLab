@@ -1,20 +1,45 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Web3Service from "./web3.server";
 
 class ReadContract20 extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       activeSection: null,
+      myTokenErc20: null,
+      getSymbol: null,
+      getDecimal:0,
+      getName:"",
+      getTotalSupply:0,
+      getBalanceOf : 0,
     }
+  }
+  async componentDidMount() {
+    await Web3Service.loadWeb3();
+    await Web3Service.loadErc20()
+    // console.log(Web3Service.state.kmutnbToken);
+    this.setState({
+      account: Web3Service.state.account,
+      myTokenErc20: Web3Service.state.myToken20,
+      getSymbol: Web3Service.state.symbol,
+      getDecimal: Web3Service.state.decimal,
+      getName : Web3Service.state.name,
+      getTotalSupply : Web3Service.state.totalSupply,
+      getBalanceOf : Web3Service.state.balanceOf
+    });
   }
   toggleVisibility = (section) => {
     this.setState((prevState) => ({
       activeSection: prevState.activeSection === section ? null : section,
     }))
   }
+  currencyFormat(num) {
+    return Intl.NumberFormat().format(num);
+  }
   render() {
     const { activeSection } = this.state
+    console.log(this.state.getDecimal)
     return (
       <>
         <br />
@@ -47,31 +72,31 @@ class ReadContract20 extends React.Component {
                 <th scope="row">1</th>
                 <td>BalanceOf(address)</td>
                 <td>จำนวน Token ทั้งหมดที่ address นั้นมี</td>
-                {/* <td>{this.currencyFormat(this.state.balanceOf)}</td> */}
+                <td>{this.currencyFormat(this.state.getBalanceOf)}</td>
               </tr>
               <tr>
                 <th scope="row">2</th>
                 <td>Decimals()</td>
                 <td>หน่วยทศนิยม Token</td>
-                {/* <td>{this.currencyFormat(this.state.decinals)}</td> */}
+                <td>{this.state.getDecimal}</td>
               </tr>
               <tr>
                 <th scope="row">3</th>
                 <td>Name()</td>
                 <td>ชื่อเต็มของ Token </td>
-                {/* <td>{this.state.SName}</td> */}
+                <td>{this.state.getName}</td>
               </tr>
               <tr>
                 <th scope="row">4</th>
                 <td>Symbol()</td>
                 <td>ชื่อย่อของ Token </td>
-                {/* <td>{this.state.SSymbols}</td> */}
+                <td>{this.state.getSymbol}</td>
               </tr>
               <tr>
                 <th scope="row">5</th>
                 <td>TotalSupply()</td>
                 <td>จำนวน Token ทั้งหมดในระบบ</td>
-                {/* <td>{this.currencyFormat(this.state.totalSupply)}</td> */}
+                <td>{this.currencyFormat(this.state.getTotalSupply)}</td>
               </tr>
             </tbody>
           </table>

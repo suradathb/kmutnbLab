@@ -12,7 +12,11 @@ class Web3Service {
       myToken20:null,
       myToken721:null,
       myToken1155:null,
-      symbol: null,
+      symbol: "",
+      decimal: 0,
+      name: "",
+      totalSupply:0,
+      balanceOf:0,
     };
   }
 
@@ -51,6 +55,11 @@ class Web3Service {
       const address = networkData.address;
       const kmutnbToken = new this.web3.eth.Contract(abi, address);
       this.state.kmutnbToken = kmutnbToken;
+      this.state.symbol = await kmutnbToken.methods.symbol().call({ from: accounts[0]});
+      this.state.decimal = await kmutnbToken.methods.decimals().call({from: accounts[0]});
+      this.state.name = await kmutnbToken.methods.name().call({ from: accounts[0] });
+      this.state.totalSupply = await kmutnbToken.methods.totalSupply().call({from: accounts[0]});
+      this.state.balanceOf = await kmutnbToken.methods.balanceOf(accounts[0]).call({from: accounts[0]});
     }
   }
 
@@ -64,7 +73,11 @@ class Web3Service {
       const erc20address = erc20networkData.address;
       const MyToken20 = new this.web3.eth.Contract(erc20abi, erc20address);
       this.state.myToken20 = MyToken20;
-
+      this.state.symbol = await MyToken20.methods.symbol().call({ from: erc20accounts[0]});
+      this.state.decimal = await MyToken20.methods.decimals().call({from: erc20accounts[0]});
+      this.state.name = await MyToken20.methods.name().call({ from: erc20accounts[0] });
+      this.state.totalSupply = await MyToken20.methods.totalSupply().call({from: erc20accounts[0]});
+      this.state.balanceOf = await MyToken20.methods.balanceOf(erc20accounts[0]).call({from: erc20accounts[0]});
     }
   }
 
@@ -77,7 +90,13 @@ class Web3Service {
       const erc721abi = MyTokenERC721.abi;
       const erc721address = erc721networkData.address;
       const MyToken721 = new this.web3.eth.Contract(erc721abi,erc721address);
-      this.state.myToken721 = MyToken721;
+      this.state.myToken721 = await MyToken721;
+      console.log(MyToken721);
+      this.state.symbol = await MyToken721.methods.symbol().call({ from: erc721accounts[0]});
+      // this.state.decimal = await MyToken721.methods.decimals().call({from: erc721accounts[0]});
+      this.state.name = await MyToken721.methods.name().call({ from: erc721accounts[0] });
+      // this.state.totalSupply = await MyToken721.methods.totalSupply().call({from: erc721accounts[0]});
+      this.state.balanceOf = await MyToken721.methods.balanceOf(erc721accounts[0]).call({from: erc721accounts[0]});
     }
   }
 
@@ -90,7 +109,12 @@ class Web3Service {
       const erc1155abi = MyTokenERC1155.abi;
       const erc1155address = erc1155networkIdData.address;
       const MyToken1155 = new this.web3.eth.Contract(erc1155abi,erc1155address);
-      this.state.myToken1155 = MyToken1155;
+      this.state.myToken1155 = await MyToken1155;
+      // this.state.symbol = await MyToken1155.methods.symbol().call({ from: erc1155account[0]});
+      // this.state.decimal = await MyToken1155.methods.decimals().call({from: erc1155account[0]});
+      // this.state.name = await MyToken1155.methods.name().call({ from: erc1155account[0] });
+      // this.state.totalSupply = await MyToken1155.methods.totalSupply().call({from: erc1155account[0]});
+      // this.state.balanceOf = await MyToken1155.methods.balanceOf(erc1155account[0]).call({from: erc1155account[0]});
     }
   }
 }
