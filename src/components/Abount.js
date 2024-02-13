@@ -4,6 +4,8 @@ import SetStockData from "./SetStockData";
 import SetChome from "./SetChome";
 import SetRemix from "./SetRemix";
 import "./Abount.css";
+import DocsERC721 from "./DocsERC721";
+import DocsERC1155 from "./DocsERC1155";
 
 class Abount extends React.Component {
   render() {
@@ -37,6 +39,8 @@ class Abount extends React.Component {
             <SetMetamask />
             <SetStockData />
             <SetRemix />
+            <DocsERC721 />
+            <DocsERC1155 />
           </div>
         </div>
         {/* <!-- end section --> */}

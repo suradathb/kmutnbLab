@@ -65,7 +65,7 @@ class AddOwner extends React.Component {
                     <p>{this.state.count}</p>
                     <p>
                       <h4>โจทย์</h4> 1.กำหนดให้เขียนฟังชั่น Smart Contract
-                      โดยใช้ Smart Contract เดิมที่มีอยู่ เพิ่มฟังชั่น
+                      โดยใช้ Smart Contract เดิมที่มีอยู่ เพิ่มฟังชั่น "addMinter(address)"
                       ให้สามารถเพิ่มเจ้าหน้าที่ที่สามารถเพิ่มเหรียญเข้าในระบบได้
                     </p>
                     <p>CMD : truffle migrate --reset --network kmutnbTes</p>

@@ -43,6 +43,10 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 
 ### EX1 
+// Allow minters to add more tokens to the contract
+    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
+        _mint(to, amount);
+    }
 ## EX2 Allow the owner to add minters
  
 // SPDX-License-Identifier: GPL-3.0
@@ -66,8 +70,10 @@ contract KmutnbToken is ERC20PresetFixedSupply, AccessControl {
             owner
         )
     {
-        _setupRole(DEFAULT_ADMIN_ROLE, owner);
-        _setupRole(MINTER_ROLE, owner);
+        _grantRole(DEFAULT_ADMIN_ROLE, owner);
+        _grantRole(MINTER_ROLE, owner);
+        //_setupRole(DEFAULT_ADMIN_ROLE, owner);
+        //_setupRole(MINTER_ROLE, owner);
     }
 
     // Allow minters to add more tokens to the contract

@@ -39,7 +39,7 @@ class ReadContract20 extends React.Component {
   }
   render() {
     const { activeSection } = this.state
-    console.log(this.state.getDecimal)
+    // console.log(this.state.getDecimal)
     return (
       <>
         <br />

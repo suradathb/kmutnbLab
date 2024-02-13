@@ -97,11 +97,11 @@ class Header extends React.Component {
                               Example
                             </Link>
                           </li>
-                          <li>
+                          {/* <li>
                             <Link className="nav-link" to="/standard">
                               Standard ERC
                             </Link>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
                     </div>

@@ -61,7 +61,7 @@ class OwnerMint extends React.Component {
                   <div className="col-sm-12 card-col">
                     <p>
                       <h4>โจทย์</h4> 1.กำหนดให้เขียน Function Smart Contract
-                      โดยใช้ Smart Contract เดิมที่มีอยู่ เพิ่ม Function
+                      โดยใช้ Smart Contract เดิมที่มีอยู่ เพิ่ม Function "mint(address,amount)"
                       ให้ผู้ออก Token เท่านั้นที่สามารถออก Token
                       เพิ่มเข้ามายังระบบได้
                     </p>
