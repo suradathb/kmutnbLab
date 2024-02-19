@@ -56,7 +56,6 @@ class ReadContract extends React.Component {
     return Intl.NumberFormat().format(num);
   }
   render() {
-    // console.log(this.state.MyToken721);
     return (
       <>
         {/* <!-- Start Banner --> */}

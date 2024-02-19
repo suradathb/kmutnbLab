@@ -91,7 +91,6 @@ class Web3Service {
       const erc721address = erc721networkData.address;
       const MyToken721 = new this.web3.eth.Contract(erc721abi,erc721address);
       this.state.myToken721 = await MyToken721;
-      console.log(MyToken721);
       this.state.symbol = await MyToken721.methods.symbol().call({ from: erc721accounts[0]});
       // this.state.decimal = await MyToken721.methods.decimals().call({from: erc721accounts[0]});
       this.state.name = await MyToken721.methods.name().call({ from: erc721accounts[0] });
