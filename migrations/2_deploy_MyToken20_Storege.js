@@ -1,4 +1,4 @@
-const MyToken20 = artifacts.require("MyToken20");
+const MyToken20 = artifacts.require("MyERC20");
 
 
 module.exports = function(deployer) {

@@ -2,8 +2,8 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-// import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
-// import "../node_modules/@openzeppelin/contracts/access/AccessControl.sol";
+import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
+import "../node_modules/@openzeppelin/contracts/access/AccessControl.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC20/presets/ERC20PresetFixedSupply.sol";
 
 contract KmutnbToken is ERC20PresetFixedSupply {
@@ -17,8 +17,8 @@ contract KmutnbToken is ERC20PresetFixedSupply {
             owner
         )
     {}
+ 
+    // Allow minters to add more tokens to the contract #แบบฝึกหัด Smart Contract
 
-    // Allow minters to add more tokens to the contract
-
-    // Allow the owner to add minters
+    // Allow the owner to add minters #แบบฝึกหัด Smart Contract #2
 }
