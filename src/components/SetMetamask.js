@@ -25,17 +25,17 @@ function SetMetamask(props) {
                 </p>
                 <p>
                   2.New RPC URL :{" "}
-                  <pre>{"https://rpc-mumbai.maticvigil.com"}</pre>
+                  <pre>{"https://rpc-amoy.polygon.technology/"}</pre>
                 </p>
                 <p>
-                  3.Chain ID : <pre>{"80001"}</pre>
+                  3.Chain ID : <pre>{"80002"}</pre>
                 </p>
                 <p>
                   4.Currency symbol : <pre>{"MATIC"}</pre>
                 </p>
                 <p>
                   5.Block explorer URL(Optional) :{" "}
-                  <pre>{"https://mumbai.polygonscan.com/"}</pre>
+                  <pre>{"https://amoy.polygonscan.com/"}</pre>
                 </p>
               </div>
               <div className="col-md-6">

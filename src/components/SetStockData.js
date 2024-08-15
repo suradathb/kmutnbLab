@@ -19,7 +19,7 @@ function SetStockData(props) {
             <div className="row">
               <div className="col-md-12">
                 <p>
-                  <h4>Polygon Faucet</h4>
+                  <h4>Polygon Amoy Faucet</h4>
                 </p>
                 <p>
                   1.ให้บริการ Token สำหรับทดสอบบน Test Net ใช้เป็นค้า Gas
@@ -39,7 +39,7 @@ function SetStockData(props) {
                   Deploy ขึ้นไปยัง Chain :{" "}
                   <a
                     className="btn btn-success"
-                    href="https://mumbai.polygonscan.com/"
+                    href="https://amoy.polygonscan.com/"
                   >
                     Polygonscan
                   </a>
@@ -51,9 +51,18 @@ function SetStockData(props) {
                   3.เอกสารคู่มือการเชื่อมต่อกับ Chain Polygon :{" "}
                   <a
                     className="btn btn-success"
-                    href="https://docs.polygonscan.com/v/mumbai-polygonscan/"
+                    href="https://docs.polygonscan.com/v/amoy-polygonscan"
                   >
                     Documentation
+                  </a>
+                </p>
+                <p>
+                Introducing the Amoy Testnet for Polygon PoS : {" "}
+                <a
+                    className="btn btn-success"
+                    href="https://polygon.technology/blog/introducing-the-amoy-testnet-for-polygon-pos"
+                  >
+                     Amoy Testnet
                   </a>
                 </p>
               </div>
