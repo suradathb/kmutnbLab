@@ -8,8 +8,6 @@ class ReadContract extends React.Component {
   async componentDidMount() {
     await Web3Service.loadWeb3();
     await Web3Service.loadBlockchainData();
-    await Web3Service.loadErc20();
-    await Web3Service.loadErc721();
     const balanceOf = await Web3Service.state.kmutnbToken.methods
       .balanceOf(Web3Service.state.account)
       .call({ from: Web3Service.state.account });

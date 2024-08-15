@@ -45,11 +45,18 @@ require("dotenv").config();
 // const { MNEMONIC, PROJECT_ID } = process.env;
 
 const HDWalletProvider = require("@truffle/hdwallet-provider");
-const providerTestnet = new HDWalletProvider({
+// const providerTestnet = new HDWalletProvider({
+//   privateKeys: [
+//     "e2024b93133398322d3e02b09108668571983a6b79e91f68b35a9e261c58f3a5",
+//   ],
+//   providerOrUrl: "https://rpc-mumbai.maticvigil.com",
+// });
+
+const providerAmoy = new HDWalletProvider({
   privateKeys: [
     "e2024b93133398322d3e02b09108668571983a6b79e91f68b35a9e261c58f3a5",
   ],
-  providerOrUrl: "https://rpc-mumbai.maticvigil.com",
+  providerOrUrl: "https://rpc-amoy.polygon.technology",
 });
 
 module.exports = {
@@ -71,6 +78,14 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
+    kmutnbAmoy: {
+      provider: () => providerAmoy,
+      network_id: "80002",
+      port: 80002,
+      gas: 6721975,          // Gas limit (default: ~6.7M)
+      gasPrice: 25000000000,  // 25 Gwei (adjust this value)
+      skipDryRun: true,
+    },
     kmutnbTes: {
       provider: () => providerTestnet,
       network_id: "80001",
