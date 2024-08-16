@@ -14,12 +14,15 @@ class OwnerMint extends React.Component {
   async componentDidMount() {
     await Web3Service.loadWeb3();
     await Web3Service.loadBlockchainData();
-    console.log(Web3Service.state.kmutnbToken);
+    console.log(this.state.account);
     this.setState({
       account: Web3Service.state.account,
       kmutnbToken: Web3Service.state.kmutnbToken,
     });
+
   }
+ 
+
   Mint() {
     alert("ฟังชั่นนี้ยังไม่เปิดใช้งาน กรุณาดำเนินการตามโจทย์ และเปิดใช้งาน");
     // console.log(this.state.address)

@@ -6,7 +6,9 @@ import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "../node_modules/@openzeppelin/contracts/access/AccessControl.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC20/presets/ERC20PresetFixedSupply.sol";
 
+// contract KmutnbToken is ERC20PresetFixedSupply,AccessControl {
 contract KmutnbToken is ERC20PresetFixedSupply {
+    // bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     constructor(
         address owner
     )
@@ -21,4 +23,5 @@ contract KmutnbToken is ERC20PresetFixedSupply {
     // Allow minters to add more tokens to the contract #แบบฝึกหัด Smart Contract
 
     // Allow the owner to add minters #แบบฝึกหัด Smart Contract #2
+    
 }
