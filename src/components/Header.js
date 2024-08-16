@@ -107,14 +107,14 @@ class Header extends React.Component {
                     </div>
                   </nav>
                   <div className="search-box">
-                    <input
+                    {/* <input
                       type="text"
                       className="search-txt"
                       placeholder="Search"
                     />
                     <a className="search-btn">
                       <img src="../images/search_icon.png" alt="#" />
-                    </a>
+                    </a> */}
                   </div>
                 </div>
               </div>
