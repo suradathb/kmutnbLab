@@ -1,5 +1,7 @@
 import React from "react";
-import Web3Service from "./web3.server";
+// import Web3Service from "./web3.server";
+import { ethers } from 'ethers'; // ✅ เพิ่มการ import ethers
+import web3Service from "./web3.server"; // ✅ ใช้ instance ที่ถูกต้อง
 
 class Allowance extends React.Component {
   constructor(props) {
@@ -10,22 +12,38 @@ class Allowance extends React.Component {
       allowance: "",
     };
   }
+  // handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const { kmutnbToken } = Web3Service.state;
+  //   if (!kmutnbToken) {
+  //     alert("Please check your web3 connection!");
+  //     return;
+  //   }
+  //   try {
+  //     const allowance = await kmutnbToken.methods
+  //       .allowance(this.state.owner, this.state.spender)
+  //       .call();
+  //     this.setState({ allowance });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
   handleSubmit = async (e) => {
     e.preventDefault();
-    const { kmutnbToken } = Web3Service.state;
+    const kmutnbToken = web3Service.contracts.get("kmutnbToken");
     if (!kmutnbToken) {
       alert("Please check your web3 connection!");
       return;
     }
     try {
-      const allowance = await kmutnbToken.methods
-        .allowance(this.state.owner, this.state.spender)
-        .call();
-      this.setState({ allowance });
+      const allowance = await kmutnbToken.allowance(this.state.owner, this.state.spender);
+      const formattedAllowance = ethers.utils.formatUnits(allowance, 18); // แปลงค่าเป็น Ether
+      this.setState({ allowance: formattedAllowance });
     } catch (err) {
       console.error(err);
     }
   };
+
   render() {
     return (
       <>
@@ -50,7 +68,7 @@ class Allowance extends React.Component {
                   <div className="col-sm-12 card-col">
                     <p>
                       <h3>ยอดเช็คที่รอเบิกคือ : </h3>
-                      {this.state.allowance} Wai
+                      {this.state.allowance} Ether
                     </p>
                     <input
                       type="text"

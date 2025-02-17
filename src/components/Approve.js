@@ -1,34 +1,72 @@
-import React from "react";
-import Web3Service from "./web3.server";
+import React from 'react'
+// import Web3Service from "./web3.server";
+import { ethers } from 'ethers'; // ✅ เพิ่มการ import ethers
+import web3Service from './web3.server' // ✅ ใช้ instance ที่ถูกต้อง
 
 class Approve extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
-      account: "",
+      account: '',
       kmutnbToken: null,
-      spender: "",
+      spender: '',
       amount: 0,
-    };
+    }
   }
 
   async componentDidMount() {
-    await Web3Service.loadWeb3();
-    await Web3Service.loadBlockchainData();
-    // console.log(Web3Service.state.kmutnbToken);
-    this.setState({
-      account: Web3Service.state.account,
-      kmutnbToken: Web3Service.state.kmutnbToken,
-    });
+    // await Web3Service.loadWeb3();
+    // await Web3Service.loadBlockchainData();
+    // // console.log(Web3Service.state.kmutnbToken);
+    // this.setState({
+    //   account: Web3Service.state.account,
+    //   kmutnbToken: Web3Service.state.kmutnbToken,
+    // });
+    await web3Service.init() // ✅ ใช้ instance `web3Service`
+    const kmutnbToken = web3Service.contracts.get('kmutnbToken')
+    // console.log(kmutnbToken);
+    // ตรวจสอบค่าของ kmutnbToken
+    if (kmutnbToken) {
+      const balanceOf = await kmutnbToken.balanceOf(web3Service.account)
+      console.log('Balance of token:', balanceOf.toString()) // ตรวจสอบค่า balance
+      this.setState({
+        account: web3Service.account,
+        kmutnbToken: kmutnbToken,
+      })
+    } else {
+      console.error('kmutnbToken is not loaded properly')
+    }
   }
+  // createApprove() {
+  //   // console.log(this.state.address)
+  //   this.state.kmutnbToken.methods
+  //     .approve(this.state.spender, this.state.amount)
+  //     .send({ from: this.state.account })
+  //     .once("receipt", (receipt) => {
+  //       console.log("BurnSusess", this.state.account, ":", this.state.amount);
+  //       window.location.reload();
+  //     });
+  // }
   createApprove() {
-    // console.log(this.state.address)
-    this.state.kmutnbToken.methods
-      .approve(this.state.spender, this.state.amount)
-      .send({ from: this.state.account })
-      .once("receipt", (receipt) => {
-        console.log("BurnSusess", this.state.account, ":", this.state.amount);
+    const { spender, amount, account, kmutnbToken } = this.state;
+  
+    if (!kmutnbToken) {
+      console.error('kmutnbToken is not loaded.');
+      return;
+    }
+  
+    if (!ethers.utils.isAddress(spender)) {
+      console.error('Invalid spender address.');
+      return;
+    }
+  
+    kmutnbToken.approve(spender, ethers.utils.parseUnits(amount.toString(), 18))
+      .then((transaction) => {
+        console.log('Approval successful:', transaction);
         window.location.reload();
+      })
+      .catch((error) => {
+        console.error('Error approving tokens:', error);
       });
   }
   render() {
@@ -37,8 +75,8 @@ class Approve extends React.Component {
         <form
           role="form"
           onSubmit={(event) => {
-            event.preventDefault();
-            this.createApprove(this.state);
+            event.preventDefault()
+            this.createApprove(this.state)
           }}
         >
           <div className="card">
@@ -56,7 +94,7 @@ class Approve extends React.Component {
               className="collapse hide"
               data-parent="#accordion"
             >
-              <div class="card-body">
+              <div className="card-body">
                 <div className="row">
                   <div className="col-sm-12 card-col">
                     <input
@@ -66,7 +104,7 @@ class Approve extends React.Component {
                       name="spender"
                       value={this.state.spender}
                       onChange={(event) => {
-                        this.setState({ spender: event.target.value });
+                        this.setState({ spender: event.target.value })
                       }}
                     />
                   </div>
@@ -78,7 +116,7 @@ class Approve extends React.Component {
                       name="amount"
                       value={this.state.amount}
                       onChange={(event) => {
-                        this.setState({ amount: event.target.value });
+                        this.setState({ amount: event.target.value })
                       }}
                     />
                   </div>
@@ -88,13 +126,15 @@ class Approve extends React.Component {
                       value="Approve"
                       className="btn btn-success"
                     />
+                    <div>
                     <p>
-                      <h4>approve(address spender, uint tokens)</h4>{" "}
+                      <h4>approve(address spender, uint tokens)</h4>{' '}
                       ใช้กันเงินให้อีก address
                       เหมือนกับทำแคชเชียร์เช็คโอนเงินให้ ได้ transaction log
                       กลับมา เพราะเป็นการบันทึกข้อมูลลง transaction เหมือนกับ
                       transfer()
-                    </p>
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -102,8 +142,8 @@ class Approve extends React.Component {
           </div>
         </form>
       </>
-    );
+    )
   }
 }
 
-export default Approve;
+export default Approve

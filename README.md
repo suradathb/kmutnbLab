@@ -90,3 +90,4 @@ contract KmutnbToken is ERC20PresetFixedSupply, AccessControl {
 ### `Start issue ` fails
 --openssl-legacy-provider
 
+truffle migrate --reset --network klaytn

@@ -1,32 +1,52 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Web3Service from "./web3.server";
+import web3Service from "./web3.server"; // ✅ ใช้ instance ที่ถูกต้อง
+import { ethers } from 'ethers'; // ✅ เพิ่มการ import ethers
 import "./Header.css";
 
 class Header extends React.Component {
-  async componentDidMount() {
-    await Web3Service.loadWeb3();
-    await Web3Service.loadBlockchainData();
-    const balanceOf = await Web3Service.state.kmutnbToken.methods
-      .balanceOf(Web3Service.state.account)
-      .call({ from: Web3Service.state.account });
-    this.setState({
-      account: Web3Service.state.account,
-      kmutnbToken: Web3Service.state.kmutnbToken,
-      balanceOf: balanceOf,
-    });
-  }
   constructor(props) {
     super(props);
     this.state = {
       account: "",
-      kmutnbToken: "",
-      balanceOf: 0,
+      kmutnbToken: null,
+      balanceOf: "0",
+      SSymbols: "",
     };
   }
+
+  async componentDidMount() {
+    await web3Service.init(); // ✅ ใช้ instance `web3Service`
+    const kmutnbToken = web3Service.contracts.get("kmutnbToken");
+    const symbols = await kmutnbToken.symbol();
+    if (kmutnbToken) {
+      this.setState({
+        account: web3Service.account,
+        kmutnbToken: kmutnbToken,
+        SSymbols: symbols,
+      });
+      this.updateBalance();
+      this.balanceInterval = setInterval(this.updateBalance, 10000); // ✅ อัปเดตยอดคงเหลือทุก 10 วินาที
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.balanceInterval); // ✅ ล้าง interval เมื่อ component ถูกทำลาย
+  }
+
+  updateBalance = async () => {
+    const { kmutnbToken, account } = this.state;
+    if (kmutnbToken && account) {
+      const balanceOf = await kmutnbToken.balanceOf(account);
+      const balanceInEther = ethers.utils.formatUnits(balanceOf, 18); // ✅ แปลงจาก Wei เป็น Ether
+      this.setState({ balanceOf: balanceInEther });
+    }
+  };
+
   currencyFormat(num) {
     return Intl.NumberFormat().format(num);
   }
+
   render() {
     return (
       <>
@@ -47,7 +67,7 @@ class Header extends React.Component {
                   <ul>
                     <li className="nav-link-head">
                       <h3>
-                        Token : {this.currencyFormat(this.state.balanceOf)} wei
+                        Token : {this.currencyFormat(this.state.balanceOf)} {this.state.SSymbols} 
                       </h3>
                     </li>
                   </ul>
@@ -91,37 +111,22 @@ class Header extends React.Component {
                             <Link className="nav-link" to="/erc20">
                               Document
                             </Link>
-                          </li>
+                         </li>
                           <li>
                             <Link className="nav-link" to="/example">
                               Example
                             </Link>
                           </li>
-                          {/* <li>
-                            <Link className="nav-link" to="/standard">
-                              Standard ERC
-                            </Link>
-                          </li> */}
                         </ul>
                       </div>
                     </div>
                   </nav>
-                  <div className="search-box">
-                    {/* <input
-                      type="text"
-                      className="search-txt"
-                      placeholder="Search"
-                    />
-                    <a className="search-btn">
-                      <img src="../images/search_icon.png" alt="#" />
-                    </a> */}
-                  </div>
+                  <div className="search-box"></div>
                 </div>
               </div>
             </div>
           </div>
         </header>
-        {/* <!-- End header --> */}
       </>
     );
   }

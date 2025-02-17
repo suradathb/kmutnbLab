@@ -1,5 +1,6 @@
 import React from "react";
-import Web3Service from "./web3.server";
+// import Web3Service from "./web3.server";
+import web3Service from "./web3.server"; // ✅ ใช้ instance ที่ถูกต้อง
 
 class DecreaseAllowance extends React.Component {
   constructor(props) {
@@ -13,27 +14,37 @@ class DecreaseAllowance extends React.Component {
   }
 
   async componentDidMount() {
-    await Web3Service.loadWeb3();
-    await Web3Service.loadBlockchainData();
-    // console.log(Web3Service.state.kmutnbToken);
-    this.setState({
-      account: Web3Service.state.account,
-      kmutnbToken: Web3Service.state.kmutnbToken,
-    });
+    // await Web3Service.loadWeb3();
+    // await Web3Service.loadBlockchainData();
+    // // console.log(Web3Service.state.kmutnbToken);
+    // this.setState({
+    //   account: Web3Service.state.account,
+    //   kmutnbToken: Web3Service.state.kmutnbToken,
+    // });
+    await web3Service.init(); // ✅ ใช้ instance `web3Service`
+    const kmutnbToken = web3Service.contracts.get("kmutnbToken");
+
+    if (kmutnbToken) {
+      const balanceOf = await kmutnbToken.balanceOf(web3Service.account);
+      this.setState({
+        account: web3Service.account,
+        kmutnbToken: kmutnbToken,
+      });
+    }
   }
   createDecreaseAllowance() {
-    // console.log(this.state.address)
-    this.state.kmutnbToken.methods
-      .decreaseAllowance(this.state.spender, this.state.subtracted)
-      .send({ from: this.state.account })
-      .once("receipt", (receipt) => {
-        console.log(
-          "BurnSusess",
-          this.state.account,
-          ":",
-          this.state.subtracted
-        );
+    if (!this.state.kmutnbToken) {
+      console.error("kmutnbToken is not loaded yet.");
+      return;
+    }
+  
+    this.state.kmutnbToken.decreaseAllowance(this.state.spender, this.state.subtracted)
+      .then((transaction) => {
+        console.log("Decrease allowance successful:", transaction);
         window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error decreasing allowance:", error);
       });
   }
   render() {

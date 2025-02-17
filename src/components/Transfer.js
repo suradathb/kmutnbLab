@@ -1,5 +1,6 @@
 import React from "react";
-import Web3Service from "./web3.server";
+// import Web3Service from "./web3.server";
+import web3Service from "./web3.server"; // ✅ ใช้ instance ที่ถูกต้อง
 
 class Transfer extends React.Component {
   constructor(props) {
@@ -12,36 +13,72 @@ class Transfer extends React.Component {
     };
   }
   async componentDidMount() {
-    await Web3Service.loadWeb3();
-    await Web3Service.loadBlockchainData();
-    //  console.log(Web3Service.state.kmutnbToken);
-    this.setState({
-      account: Web3Service.state.account,
-      kmutnbToken: Web3Service.state.kmutnbToken,
-    });
+    document.addEventListener('submit', this.handleFormSubmit, { passive: false });
+    await web3Service.init(); // โหลด Web3 และ Smart Contract
+    console.log("Web3 initialized:", web3Service);
+  
+    const kmutnb = web3Service.contracts.get("kmutnbToken");
+    // console.log("Loaded contract:", kmutnb);
+  
+    if (!kmutnb) {
+      console.error("kmutnbToken contract not found!");
+      return;
+    }
+  
+    try {
+      const balanceOf = await kmutnb.balanceOf(web3Service.account);
+      // console.log("BalanceOf:", balanceOf);
+  
+      this.setState({
+        account: web3Service.account,
+        kmutnbToken: kmutnb,
+      }, () => {
+        console.log("State updated:", this.state);
+      });
+    } catch (error) {
+      console.error("Error loading contract data:", error);
+    }
   }
+
+  componentWillUnmount() {
+    document.removeEventListener('submit', this.handleFormSubmit);
+  }
+  
+  handleFormSubmit = (event) => {
+    event.preventDefault();
+    this.createTransfer();
+  }
+  
   currencyFormat(num) {
     return Intl.NumberFormat().format(num);
   }
   createTransfer() {
-    // console.log(this.state.address)
-    this.state.kmutnbToken.methods
-      .transfer(this.state.address, this.state.amount)
-      .send({ from: this.state.account })
-      .once("receipt", (receipt) => {
-        console.log("BurnSusess", this.state.account, ":", this.state.amount);
+    if (!this.state.kmutnbToken) {
+      console.error("kmutnbToken is not loaded yet.");
+      return;
+    }
+  
+    this.state.kmutnbToken.transfer(this.state.address, this.state.amount)
+      .then((transaction) => {
+        console.log("Transfer successful:", transaction);
         window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error transferring tokens:", error);
       });
   }
+  
   render() {
     return (
       <>
         <form
+          // role="form"
+          // onSubmit={(event) => {
+          //   event.preventDefault();
+          //   this.createTransfer(this.state);
+          // }}
           role="form"
-          onSubmit={(event) => {
-            event.preventDefault();
-            this.createTransfer(this.state);
-          }}
+          onSubmit={this.handleFormSubmit}
         >
           <div className="card">
             <div className="card-header">

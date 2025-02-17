@@ -2,47 +2,49 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Allowance from "./Allowance";
 import "./ReadContract.css";
-import Web3Service from "./web3.server";
+import web3Service from "./web3.server";
+import { ethers } from 'ethers'; // ✅ เพิ่มการ import ethers
 
 class ReadContract extends React.Component {
   async componentDidMount() {
-    await Web3Service.loadWeb3();
-    await Web3Service.loadBlockchainData();
-    const balanceOf = await Web3Service.state.kmutnbToken.methods
-      .balanceOf(Web3Service.state.account)
-      .call({ from: Web3Service.state.account });
-    const names = await Web3Service.state.kmutnbToken.methods
-      .name()
-      .call({ from: Web3Service.state.account });
-    const symbols = await Web3Service.state.kmutnbToken.methods
-      .symbol()
-      .call({ from: Web3Service.state.account });
-    const decimal = await Web3Service.state.kmutnbToken.methods
-      .decimals()
-      .call({ from: Web3Service.state.account });
-    const totalSupply = await Web3Service.state.kmutnbToken.methods
-      .totalSupply()
-      .call({ from: Web3Service.state.account });
-    // console.log(Web3Service.state.kmutnbToken);
-    this.setState({
-      account: Web3Service.state.account,
-      kmutnbToken: Web3Service.state.kmutnbToken,
-      MyToken20: Web3Service.state.myToken20,
-      MyToken721: Web3Service.state.myToken721,
-      balanceOf: balanceOf,
-      SName: names,
-      SSymbols: symbols,
-      decinals: decimal,
-      totalSupply: totalSupply,
-    });
+    await web3Service.init(); // เปลี่ยนจาก `loadWeb3()` และ `loadBlockchainData()`
+    
+    const kmutnbToken = web3Service.contracts.get("kmutnbToken");
+    if (!kmutnbToken) {
+      console.error("KMUTNB Token contract not loaded.");
+      return;
+    }
+  
+    try {
+      const balanceOf = await kmutnbToken.balanceOf(web3Service.account);
+      const names = await kmutnbToken.name();
+      const symbols = await kmutnbToken.symbol();
+      const decimal = await kmutnbToken.decimals();
+      const totalSupply = await kmutnbToken.totalSupply();
+  
+      this.setState({
+        account: web3Service.account,
+        kmutnbToken: kmutnbToken,
+        MyToken20: web3Service.contracts.get("myToken20"),
+        MyToken721: web3Service.contracts.get("myToken721"),
+        balanceOf: ethers.utils.formatUnits(balanceOf, decimal), // ✅ แปลงจาก Wei เป็นหน่วยที่ถูกต้อง
+        SName: names,
+        SSymbols: symbols,
+        decinals: decimal.toString(),
+        totalSupply: ethers.utils.formatUnits(totalSupply, decimal), // ✅ แปลงจาก Wei เป็นหน่วยที่ถูกต้อง
+      });
+    } catch (error) {
+      console.error("Error fetching contract data:", error);
+    }
   }
+  
   constructor(props) {
     super(props);
     this.state = {
       account: "",
       kmutnbToken: "",
-      MyToken20:"",
-      MyToken721:"",
+      MyToken20: "",
+      MyToken721: "",
       balanceOf: 0,
       totalSupply: 0,
       SName: "",
@@ -50,9 +52,11 @@ class ReadContract extends React.Component {
       decinals: 0,
     };
   }
+
   currencyFormat(num) {
     return Intl.NumberFormat().format(num);
   }
+
   render() {
     return (
       <>
@@ -84,7 +88,7 @@ class ReadContract extends React.Component {
                 Read Contract
               </Link>
               <Link className="link" to="/write">
-                write Contract
+                Write Contract
               </Link>
             </div>
             <br />
@@ -102,13 +106,13 @@ class ReadContract extends React.Component {
                   <th scope="row">1</th>
                   <td>BalanceOf(address)</td>
                   <td>จำนวน Token ทั้งหมดที่ address นั้นมี</td>
-                  <td>{this.currencyFormat(this.state.balanceOf)}</td>
+                  <td>{this.currencyFormat(this.state.balanceOf)} {this.state.SSymbols}</td>
                 </tr>
                 <tr>
                   <th scope="row">2</th>
                   <td>Decimals()</td>
                   <td>หน่วยทศนิยม Token</td>
-                  <td>{this.currencyFormat(this.state.decinals)}</td>
+                  <td>{this.state.decinals}</td>
                 </tr>
                 <tr>
                   <th scope="row">3</th>
@@ -126,7 +130,7 @@ class ReadContract extends React.Component {
                   <th scope="row">5</th>
                   <td>TotalSupply()</td>
                   <td>จำนวน Token ทั้งหมดในระบบ</td>
-                  <td>{this.currencyFormat(this.state.totalSupply)}</td>
+                  <td>{this.currencyFormat(this.state.totalSupply)} {this.state.SSymbols}</td>
                 </tr>
               </tbody>
             </table>

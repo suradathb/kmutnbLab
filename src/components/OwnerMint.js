@@ -1,5 +1,6 @@
 import React from "react";
-import Web3Service from "./web3.server";
+import web3Service from './web3.server';
+import { ethers } from "ethers";
 
 class OwnerMint extends React.Component {
   constructor(props) {
@@ -11,29 +12,81 @@ class OwnerMint extends React.Component {
     };
   }
 
+  // async componentDidMount() {
+  //   await Web3Service.loadWeb3();
+  //   await Web3Service.loadBlockchainData();
+  //   console.log(this.state.account);
+  //   this.setState({
+  //     account: Web3Service.state.account,
+  //     kmutnbToken: Web3Service.state.kmutnbToken,
+  //   });
+
+  // }
+
   async componentDidMount() {
-    await Web3Service.loadWeb3();
-    await Web3Service.loadBlockchainData();
-    console.log(this.state.account);
-    this.setState({
-      account: Web3Service.state.account,
-      kmutnbToken: Web3Service.state.kmutnbToken,
-    });
-
+    await web3Service.init(); // โหลด Web3 และ Smart Contract
+    // console.log("Web3 initialized:", web3Service);
+  
+    const kmutnbToken = web3Service.contracts.get("kmutnbToken");
+    // console.log("Loaded contract:", kmutnbToken);
+  
+    if (!kmutnbToken) {
+      console.error("kmutnbToken contract not found!");
+      return;
+    }
+  
+    try {
+      const balanceOf = await kmutnbToken.methods.balanceOf(web3Service.account).call();
+      console.log("BalanceOf:", balanceOf);
+  
+      this.setState({
+        account: web3Service.account,
+        kmutnbToken: kmutnbToken,
+      });
+    } catch (error) {
+      console.error("Error loading contract data:", error);
+    }
   }
- 
+  
+  async Mint() {
+    try {
+        // ประมาณค่า gas โดยอัตโนมัติ
+        const gasEstimate = await this.state.kmutnbToken.methods
+            .mint(this.state.account, this.state.amount)
+            .estimateGas({ from: this.state.account });
 
-  Mint() {
-    alert("ฟังชั่นนี้ยังไม่เปิดใช้งาน กรุณาดำเนินการตามโจทย์ และเปิดใช้งาน");
-    // console.log(this.state.address)
-    // this.state.kmutnbToken.methods
-    //   .mint(this.state.account,this.state.amount)
-    //   .send({ from: this.state.account })
-    //   .once("receipt", (receipt) => {
-    //     console.log("BurnSusess", this.state.account, ":", this.state.amount);
-    //     window.location.reload();
-    //   });
-  }
+        // ส่งธุรกรรม
+        await this.state.kmutnbToken.methods
+            .mint(this.state.account, this.state.amount)
+            .send({
+                from: this.state.account,
+                gas: gasEstimate,  // ใช้ค่า gas ที่ประมาณมา
+                gasPrice: '30000000000' // กำหนดค่า gas price (30 gwei)
+            })
+            .once("receipt", (receipt) => {
+                console.log("MintSuccess", this.state.account, ":", this.state.amount);
+                window.location.reload();
+            });
+
+    } catch (error) {
+        console.error("Transaction Error: ", error);
+
+        // คุณสามารถแจ้งผู้ใช้หรือทำการ retry ธุรกรรมได้ถ้าต้องการ
+        alert("เกิดข้อผิดพลาดในการทำธุรกรรม กรุณาลองอีกครั้ง");
+    }
+}
+
+  // Mint() {
+  //   // alert("ฟังชั่นนี้ยังไม่เปิดใช้งาน กรุณาดำเนินการตามโจทย์ และเปิดใช้งาน");
+  //   // console.log(this.state.address)
+  //   this.state.kmutnbToken.methods
+  //     .mint(this.state.account,this.state.amount)
+  //     .send({ from: this.state.account })
+  //     .once("receipt", (receipt) => {
+  //       console.log("BurnSusess", this.state.account, ":", this.state.amount);
+  //       window.location.reload();
+  //     });
+  // }
   render() {
     return (
       <>

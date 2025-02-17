@@ -1,5 +1,7 @@
 import React from "react";
-import Web3Service from "./web3.server";
+// import Web3Service from "./web3.server";
+import { ethers } from 'ethers'; // ✅ เพิ่มการ import ethers
+import web3Service from "./web3.server"; // ✅ ใช้ instance ที่ถูกต้อง
 
 class Burn extends React.Component {
   constructor(props) {
@@ -12,24 +14,44 @@ class Burn extends React.Component {
   }
 
   async componentDidMount() {
-    await Web3Service.loadWeb3();
-    await Web3Service.loadBlockchainData();
-    // console.log(Web3Service.state.kmutnbToken);
-    this.setState({
-      account: Web3Service.state.account,
-      kmutnbToken: Web3Service.state.kmutnbToken,
-    });
-  }
-  createBurn() {
-    // console.log(this.state.address)
-    this.state.kmutnbToken.methods
-      .burn(this.state.amount)
-      .send({ from: this.state.account })
-      .once("receipt", (receipt) => {
-        console.log("BurnSusess", this.state.account, ":", this.state.amount);
-        window.location.reload();
+    // await Web3Service.loadWeb3();
+    // await Web3Service.loadBlockchainData();
+    // // console.log(Web3Service.state.kmutnbToken);
+    // this.setState({
+    //   account: Web3Service.state.account,
+    //   kmutnbToken: Web3Service.state.kmutnbToken,
+    // });
+    await web3Service.init(); // ✅ ใช้ instance `web3Service`
+    const kmutnbToken = web3Service.contracts.get("kmutnbToken");
+
+    if (kmutnbToken) {
+      const balanceOf = await kmutnbToken.balanceOf(web3Service.account);
+      this.setState({
+        account: web3Service.account,
+        kmutnbToken: kmutnbToken,
       });
+    }
   }
+  createBurn = async () => {
+    const { kmutnbToken, account, amount } = this.state;
+  
+    if (!kmutnbToken) {
+      console.error("kmutnbToken is not loaded yet.");
+      return;
+    }
+  
+    try {
+      // แปลงจำนวนเงินเป็น Wei
+      const amountInWei = ethers.utils.parseUnits(amount.toString(), 18);
+      console.log("amountInWei:", amountInWei.toString());
+      // Call burn
+      const transaction = await kmutnbToken.burn(amountInWei).send({ from: account });
+      console.log("Burn successful:", transaction);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error burning tokens:", error);
+    }
+  };
   render() {
     return (
       <>
@@ -37,7 +59,7 @@ class Burn extends React.Component {
           role="form"
           onSubmit={(event) => {
             event.preventDefault();
-            this.createBurn(this.state);
+            this.createBurn();
           }}
         >
           <div className="card">
@@ -55,7 +77,7 @@ class Burn extends React.Component {
               className="collapse hide"
               data-parent="#accordion"
             >
-              <div class="card-body">
+              <div className="card-body">
                 <div className="row">
                   <div className="col-sm-12 card-col">
                     <input

@@ -1,5 +1,5 @@
 import React from "react";
-import Web3Service from "./web3.server";
+import web3Service from "./web3.server"; // ✅ ใช้ instance ที่ถูกต้อง
 
 class TransferFrom extends React.Component {
   constructor(props) {
@@ -14,39 +14,51 @@ class TransferFrom extends React.Component {
     };
   }
 
+  async componentDidMount() {
+    await web3Service.init(); // โหลด Web3 และ Smart Contract
+    console.log("Web3 initialized:", web3Service);
+
+    const kmutnbToken = web3Service.contracts.get("kmutnbToken");
+    console.log("Loaded contract:", kmutnbToken);
+
+    if (!kmutnbToken) {
+      console.error("kmutnbToken contract not found!");
+      return;
+    }
+
+    this.setState({
+      account: web3Service.account,
+      kmutnbToken: kmutnbToken,
+    });
+  }
+
   handleSubmit = async (e) => {
     e.preventDefault();
-    const { kmutnbToken, account } = Web3Service.state;
+    const { kmutnbToken, account } = this.state;
     if (!kmutnbToken) {
       alert("Please check your web3 connection!");
       return;
     }
     try {
-      const success = await kmutnbToken.methods
-        .transferFrom(
-          this.state.addressFrom,
-          this.state.addressTo,
-          this.state.amount
-        )
-        .send({ from: account })
-        .once("receipt", (receipt) => {
-          this.setState({ success: success });
-          console.log("BurnSusess", this.state.account, ":", this.state.amount);
-          window.location.reload();
-        });
+      const success = await kmutnbToken.transferFrom(
+        this.state.addressFrom,
+        this.state.addressTo,
+        this.state.amount
+      ).send({ from: account });
+
+      this.setState({ success: success });
+      console.log("Transfer successful:", success);
+      window.location.reload();
     } catch (err) {
       console.error(err);
     }
   };
+
   render() {
     return (
       <>
         <form
           role="form"
-          // onSubmit={(event) => {
-          //   event.preventDefault();
-          //   this.createTransferFrom(this.state);
-          // }}
           onSubmit={this.handleSubmit}
         >
           <div className="card">
@@ -69,7 +81,7 @@ class TransferFrom extends React.Component {
                   <div className="col-sm-12 card-col">
                     <p>
                       <h4>ผลการรับเช็ค : </h4>
-                      {this.state.success}
+                      {this.state.success ? "Success" : "Pending"}
                     </p>
                     <input
                       type="text"
