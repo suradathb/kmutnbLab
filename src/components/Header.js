@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import web3Service from "./web3.server"; // ✅ ใช้ instance ที่ถูกต้อง
 import { ethers } from 'ethers'; // ✅ เพิ่มการ import ethers
 import "./Header.css";
+import ConnectWallet from "./ConnectWallet";
 
 class Header extends React.Component {
   constructor(props) {
@@ -18,8 +19,8 @@ class Header extends React.Component {
   async componentDidMount() {
     await web3Service.init(); // ✅ ใช้ instance `web3Service`
     const kmutnbToken = web3Service.contracts.get("kmutnbToken");
-    const symbols = await kmutnbToken.symbol();
     if (kmutnbToken) {
+      const symbols = await kmutnbToken.symbol();
       this.setState({
         account: web3Service.account,
         kmutnbToken: kmutnbToken,
@@ -27,6 +28,8 @@ class Header extends React.Component {
       });
       this.updateBalance();
       this.balanceInterval = setInterval(this.updateBalance, 10000); // ✅ อัปเดตยอดคงเหลือทุก 10 วินาที
+    } else {
+      console.error("kmutnbToken contract not found");
     }
   }
 
@@ -70,6 +73,7 @@ class Header extends React.Component {
                         Token : {this.currencyFormat(this.state.balanceOf)} {this.state.SSymbols} 
                       </h3>
                     </li>
+                    <ConnectWallet />
                   </ul>
                 </div>
               </div>
@@ -103,9 +107,7 @@ class Header extends React.Component {
                       >
                         <ul className="navbar-nav">
                           <li>
-                            <Link className="nav-link active" to="/">
-                              Smart Contract
-                            </Link>
+                            <Link className="nav-link active" to="/"> Smart Contract </Link>
                           </li>
                           <li>
                             <Link className="nav-link" to="/erc20">

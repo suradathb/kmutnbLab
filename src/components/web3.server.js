@@ -1,3 +1,4 @@
+import Web3 from 'web3';
 import { ethers } from "ethers";
 import KmutnbToken from "../abis/KmutnbToken.json";
 
@@ -7,6 +8,7 @@ class Web3Service {
     this.signer = null;
     this.contracts = new Map();
     this.account = "";
+    this.web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
   }
 
   async init() {
@@ -24,6 +26,30 @@ class Web3Service {
       console.error("Non-Ethereum browser detected. Please install MetaMask!");
     }
   }
+
+  async getAccount() {
+    if (!this.signer) {
+      console.warn("Signer not initialized, calling init()");
+      await this.init(); // เรียก init() ก่อนเพื่อให้แน่ใจว่า signer ถูกตั้งค่าแล้ว
+    }
+    return this.account;
+  }
+  
+
+  async connectWallet() {
+    try {
+      if (!window.ethereum) {
+        console.error("MetaMask is not installed!");
+        return;
+      }
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+      this.account = await this.signer.getAddress();
+      return this.account;
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+    }
+  }
+  
 
   listenForEvents() {
     window.ethereum.on("accountsChanged", async (accounts) => {

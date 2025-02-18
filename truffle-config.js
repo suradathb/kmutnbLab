@@ -59,6 +59,12 @@ const providerAmoy = new HDWalletProvider({
   providerOrUrl: "https://rpc-amoy.polygon.technology",
 });
 
+const providerLocal = new HDWalletProvider({
+  privateKeys: [
+    "0x6ceb804a139f33b45b174e4ad376a6c46ae4a3c75cddf7e5d846d6f792c71554",
+  ],
+  providerOrUrl: "https://rpc-amoy.polygon.technology",
+});
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -92,11 +98,11 @@ module.exports = {
       port: 80001,
       skipDryRun: true,
     },
-    // development: {
-    //  host: "127.0.0.1",     // Localhost (default: none)
-    //  port: 8545,            // Standard Ethereum port (default: none)
-    //  network_id: "*",       // Any network (default: none)
-    // },
+    development: {
+     host: "127.0.0.1",     // Localhost (default: none)
+     port: 8545,            // Standard Ethereum port (default: none)
+     network_id: "1515",       // Any network (default: none)
+    },
     //
     // An additional network, but with some advanced options…
     // advanced: {
